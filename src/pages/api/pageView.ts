@@ -6,6 +6,7 @@ interface IFacebookApiRequest extends NextApiRequest {
     event_name: string;
     fbp: string;
     event_source_url: string;
+    client_user_agent: string;
   };
 }
 
@@ -22,9 +23,8 @@ export default async function Handler(
         event_time: Math.floor(new Date().getTime() / 1000),
         event_source_url: req.body.event_source_url,
         user_data: {
-          client_ip_address: "49.150.125.200",
-          client_user_agent:
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0",
+          // client_ip_address: "49.150.125.200",
+          client_user_agent: req.body.client_user_agent,
           fbp: req.body.fbp,
         },
       },

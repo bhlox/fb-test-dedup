@@ -56,6 +56,7 @@ export default function Home() {
         event_name: "ViewContent",
         fbp: getCookie("_fbp"),
         event_source_url: window.location.href,
+        client_user_agent: navigator.userAgent,
       }),
       headers: {
         "Content-Type": "application/json",
