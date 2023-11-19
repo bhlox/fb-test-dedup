@@ -28,7 +28,7 @@ export default function Home() {
         pixel.fbq("track", "PageView", {}, { eventID: pageViewEventId });
       });
     setTimeout(() => {
-      fetch("/api/pageView", {
+      fetch("/api/event", {
         method: "POST",
         body: JSON.stringify({
           event_id: pageViewEventId,
@@ -49,7 +49,7 @@ export default function Home() {
     //     pixel.init("967516697795046");
     //     pixel.fbq("track", "ViewContent", {}, { eventID: viewContentEventId });
     //   });
-    fetch("/api/pageView", {
+    fetch("/api/event", {
       method: "POST",
       body: JSON.stringify({
         event_id: viewContentEventId,
