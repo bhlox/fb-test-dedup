@@ -43,12 +43,12 @@ export default function Home() {
     }, 1000);
   };
   const handleViewContent = () => {
-    // import("react-facebook-pixel")
-    //   .then((mod) => mod.default)
-    //   .then((pixel) => {
-    //     pixel.init("967516697795046");
-    //     pixel.fbq("track", "ViewContent", {}, { eventID: viewContentEventId });
-    //   });
+    import("react-facebook-pixel")
+      .then((mod) => mod.default)
+      .then((pixel) => {
+        // pixel.init("967516697795046");
+        pixel.fbq("track", "ViewContent", {}, { eventID: viewContentEventId });
+      });
     fetch("/api/event", {
       method: "POST",
       body: JSON.stringify({
