@@ -1,8 +1,9 @@
 import { Inter } from "next/font/google";
 import Script from "next/script";
-import { useEffect, useId } from "react";
+import { FormEvent, useEffect, useId, useRef } from "react";
 import { v4 } from "uuid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { sha256 } from "js-sha256";
 
 function getCookie(name: string) {
   if (document.cookie && document.cookie !== "") {
@@ -18,20 +19,19 @@ function getCookie(name: string) {
 }
 
 export default function Home() {
-  const pageViewEventId = v4();
-  const viewContentEventId = v4();
-
+  const inputRef = useRef<HTMLInputElement>(null);
   const handlePageView = () => {
+    const eventID = v4();
     import("react-facebook-pixel")
       .then((mod) => mod.default)
       .then((pixel) => {
-        pixel.fbq("track", "PageView", {}, { eventID: pageViewEventId });
+        pixel.fbq("track", "PageView", {}, { eventID });
       });
     setTimeout(() => {
       fetch("/api/event", {
         method: "POST",
         body: JSON.stringify({
-          event_id: pageViewEventId,
+          event_id: eventID,
           client_user_agent: navigator.userAgent,
           event_name: "PageView",
           fbp: getCookie("_fbp"),
@@ -44,16 +44,17 @@ export default function Home() {
     }, 1000);
   };
   const handleViewContent = () => {
+    const eventID = v4();
     import("react-facebook-pixel")
       .then((mod) => mod.default)
       .then((pixel) => {
         // pixel.init("967516697795046");
-        pixel.fbq("track", "ViewContent", {}, { eventID: viewContentEventId });
+        pixel.fbq("track", "ViewContent", {}, { eventID });
       });
     fetch("/api/event", {
       method: "POST",
       body: JSON.stringify({
-        event_id: viewContentEventId,
+        event_id: eventID,
         event_name: "ViewContent",
         fbp: getCookie("_fbp"),
         event_source_url: window.location.href,
@@ -64,10 +65,39 @@ export default function Home() {
       },
     });
   };
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!inputRef.current?.value) {
+      alert("pls enter an email");
+      return;
+    }
+
+    const eventID = v4();
+    import("react-facebook-pixel")
+      .then((mod) => mod.default)
+      .then((pixel) => {
+        // pixel.init("967516697795046");
+        pixel.fbq("track", "Lead", {}, { eventID });
+      });
+    fetch("/api/event", {
+      method: "POST",
+      body: JSON.stringify({
+        event_id: eventID,
+        event_name: "Lead",
+        fbp: getCookie("_fbp"),
+        event_source_url: window.location.href,
+        client_user_agent: navigator.userAgent,
+        em: sha256(inputRef.current?.value),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center max-w-7xl p-4 mx-auto">
+      <div className="min-h-screen flex flex-col items-center justify-center max-w-7xl p-4 mx-auto space-y-4">
         <div className="flex items-center justify-center gap-4">
           <button
             onClick={handlePageView}
@@ -82,6 +112,20 @@ export default function Home() {
             VIEW CONTENT BUTTON
           </button>
         </div>
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+          <input
+            ref={inputRef}
+            type="email"
+            placeholder="enter email"
+            className="px-4 py-2 rounded-lg"
+          />
+          <button
+            type="submit"
+            className="bg-white px-4 py-2 text-black rounded-xl"
+          >
+            Submit Lead
+          </button>
+        </form>
       </div>
     </>
   );
