@@ -8,6 +8,7 @@ interface IFacebookApiRequest extends NextApiRequest {
     event_source_url: string;
     client_user_agent: string;
     em: string;
+    isTest: boolean;
   };
 }
 
@@ -31,7 +32,7 @@ export default async function Handler(
         },
       },
     ],
-    // test_event_code: facebookAdsConfig.testId,
+    test_event_code: req.body.isTest ? "TEST46387" : null,
   };
   const response = await fetch(
     `https://graph.facebook.com/v18.0/967516697795046/events?access_token=EAAGLMKEeUCcBO3nXtJbC6lnjwMORuThMxkkZAI8o9e9zjlcIOWfrg8auwpmaCj1Dq0CAnUD6UURdWRrHhXxlkZBqoghZBM6l0AMcLvpcZAAVNhqSELd5cOdirGogrX0cBlypPqWjHSzIx3MmRp1UdCwL4DxHTaEl7D66hAoHhHUmsJwF2v8VddN8pseJVBmXaAZDZD`,

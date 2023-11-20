@@ -1,10 +1,12 @@
-import { FormEvent, useEffect, useId, useRef } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { v4 } from "uuid";
 import { sha256 } from "js-sha256";
 import { getCookie } from "@/lib/util/getCookie";
 
 export default function Home() {
+  const [submitted, setSubmitted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const checkboxRef = useRef<HTMLInputElement>(null);
 
   const handlePageView = () => {
     const eventID = v4();
@@ -22,6 +24,7 @@ export default function Home() {
           event_name: "PageView",
           fbp: getCookie("_fbp"),
           event_source_url: window.location.href,
+          isTest: checkboxRef.current?.checked,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -46,6 +49,7 @@ export default function Home() {
         fbp: getCookie("_fbp"),
         event_source_url: window.location.href,
         client_user_agent: navigator.userAgent,
+        isTest: checkboxRef.current?.checked,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -53,7 +57,7 @@ export default function Home() {
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmitLead = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!inputRef.current?.value) {
       alert("pls enter an email");
@@ -61,12 +65,12 @@ export default function Home() {
     }
 
     const eventID = v4();
-    // import("react-facebook-pixel")
-    //   .then((mod) => mod.default)
-    //   .then((pixel) => {
-    //     // pixel.init("967516697795046");
-    //     pixel.fbq("track", "Lead", {}, { eventID });
-    //   });
+    import("react-facebook-pixel")
+      .then((mod) => mod.default)
+      .then((pixel) => {
+        // pixel.init("967516697795046");
+        pixel.fbq("track", "Lead", {}, { eventID });
+      });
     fetch("/api/event", {
       method: "POST",
       body: JSON.stringify({
@@ -76,16 +80,24 @@ export default function Home() {
         event_source_url: window.location.href,
         client_user_agent: navigator.userAgent,
         em: sha256(inputRef.current?.value),
+        isTest: checkboxRef.current?.checked,
       }),
       headers: {
         "Content-Type": "application/json",
       },
     });
+    setSubmitted(true);
   };
 
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-center max-w-7xl p-4 mx-auto space-y-4 bg-black">
+        <div className="flex gap-2">
+          <input ref={checkboxRef} type="checkbox" name="test" id="test" />
+          <label htmlFor="test" className="text-white">
+            test mode
+          </label>
+        </div>
         <div className="flex items-center justify-center gap-4">
           <button
             onClick={handlePageView}
@@ -100,7 +112,7 @@ export default function Home() {
             VIEW CONTENT BUTTON
           </button>
         </div>
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+        <form onSubmit={handleSubmitLead} className="flex flex-col space-y-4">
           <input
             ref={inputRef}
             type="email"
@@ -109,9 +121,12 @@ export default function Home() {
           />
           <button
             type="submit"
-            className="bg-white px-4 py-2 text-black rounded-xl"
+            disabled={submitted}
+            className={`${
+              submitted ? "bg-green-400 text-white" : "bg-white text-black"
+            } px-4 py-2 rounded-xl`}
           >
-            Submit Lead
+            {submitted ? "Submitted Lead" : "Submit lead"}
           </button>
         </form>
       </div>
