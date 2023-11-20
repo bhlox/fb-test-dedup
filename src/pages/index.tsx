@@ -32,6 +32,7 @@ export default function Home() {
         method: "POST",
         body: JSON.stringify({
           event_id: pageViewEventId,
+          client_user_agent: navigator.userAgent,
           event_name: "PageView",
           fbp: getCookie("_fbp"),
           event_source_url: window.location.href,
