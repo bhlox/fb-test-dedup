@@ -117,7 +117,7 @@ export default function Home() {
             ref={inputRef}
             type="email"
             placeholder="enter email"
-            className="px-4 py-2 rounded-lg"
+            className="px-4 py-2 rounded-lg text-black bg-white"
           />
           <button
             type="submit"
