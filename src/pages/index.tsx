@@ -73,12 +73,12 @@ export default function Home() {
     }
 
     const eventID = v4();
-    import("react-facebook-pixel")
-      .then((mod) => mod.default)
-      .then((pixel) => {
-        // pixel.init("967516697795046");
-        pixel.fbq("track", "Lead", {}, { eventID });
-      });
+    // import("react-facebook-pixel")
+    //   .then((mod) => mod.default)
+    //   .then((pixel) => {
+    //     // pixel.init("967516697795046");
+    //     pixel.fbq("track", "Lead", {}, { eventID });
+    //   });
     fetch("/api/event", {
       method: "POST",
       body: JSON.stringify({
