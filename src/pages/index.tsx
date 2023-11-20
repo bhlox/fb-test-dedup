@@ -1,25 +1,11 @@
-import { Inter } from "next/font/google";
-import Script from "next/script";
 import { FormEvent, useEffect, useId, useRef } from "react";
 import { v4 } from "uuid";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { sha256 } from "js-sha256";
-
-function getCookie(name: string) {
-  if (document.cookie && document.cookie !== "") {
-    var cookies = document.cookie.split(";");
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === name + "=") {
-        return decodeURIComponent(cookie.substring(name.length + 1));
-      }
-    }
-  }
-  return null;
-}
+import { getCookie } from "@/lib/util/getCookie";
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
+
   const handlePageView = () => {
     const eventID = v4();
     import("react-facebook-pixel")
@@ -43,6 +29,7 @@ export default function Home() {
       });
     }, 1000);
   };
+
   const handleViewContent = () => {
     const eventID = v4();
     import("react-facebook-pixel")
@@ -65,6 +52,7 @@ export default function Home() {
       },
     });
   };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!inputRef.current?.value) {
