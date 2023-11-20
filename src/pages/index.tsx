@@ -67,17 +67,17 @@ export default function Home() {
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center">
-        <div>
+      <div className="min-h-screen flex items-center justify-center max-w-7xl p-4 mx-auto">
+        <div className="flex items-center justify-center gap-4">
           <button
             onClick={handlePageView}
-            className="px-4 py-2 bg-white text-black text-xl"
+            className="px-4 py-2 bg-white text-black text-xl rounded-xl"
           >
             PAGE VIEW BUTTON
           </button>
           <button
             onClick={handleViewContent}
-            className="px-4 py-2 bg-white text-black text-xl"
+            className="px-4 py-2 bg-white text-black text-xl rounded-xl"
           >
             VIEW CONTENT BUTTON
           </button>
