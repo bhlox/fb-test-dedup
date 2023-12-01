@@ -9,6 +9,7 @@ interface IFacebookApiRequest extends NextApiRequest {
     client_user_agent: string;
     em: string;
     isTest: boolean;
+    external_id: string;
   };
 }
 
@@ -29,6 +30,7 @@ export default async function Handler(
           client_user_agent: req.body.client_user_agent,
           fbp: req.body.fbp,
           em: req.body.em,
+          external_id: req.body.external_id,
         },
       },
     ],

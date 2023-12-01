@@ -1,7 +1,7 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { v4 } from "uuid";
 import { sha256 } from "js-sha256";
-import { getCookie } from "@/lib/util/getCookie";
+import { getCookie, setCookie } from "@/lib/util/cookies";
 
 export default function Home() {
   const [submitted, setSubmitted] = useState(false);
@@ -25,6 +25,7 @@ export default function Home() {
           fbp: getCookie("_fbp"),
           event_source_url: window.location.href,
           isTest: checkboxRef.current?.checked,
+          external_id: getCookie("userID"),
         }),
         headers: {
           "Content-Type": "application/json",
@@ -49,6 +50,7 @@ export default function Home() {
         fbp: getCookie("_fbp"),
         event_source_url: window.location.href,
         client_user_agent: navigator.userAgent,
+        external_id: getCookie("userID"),
         isTest: checkboxRef.current?.checked,
       }),
       headers: {
@@ -81,6 +83,7 @@ export default function Home() {
         client_user_agent: navigator.userAgent,
         em: sha256(inputRef.current?.value),
         isTest: checkboxRef.current?.checked,
+        external_id: getCookie("userID"),
       }),
       headers: {
         "Content-Type": "application/json",
@@ -88,6 +91,12 @@ export default function Home() {
     });
     setSubmitted(true);
   };
+
+  useEffect(() => {
+    if (!getCookie("userID")) {
+      setCookie("userID", v4(), 90);
+    }
+  }, []);
 
   return (
     <>
