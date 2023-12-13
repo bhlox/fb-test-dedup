@@ -4,6 +4,8 @@ import { sha256 } from "js-sha256";
 import { getCookie, setCookie } from "@/lib/util/cookies";
 
 export default function Home() {
+  const pageViewRefBtn = useRef<HTMLButtonElement>(null);
+
   const [submitted, setSubmitted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const checkboxRef = useRef<HTMLInputElement>(null);
@@ -15,6 +17,7 @@ export default function Home() {
       .then((pixel) => {
         pixel.fbq("track", "PageView", {}, { eventID });
       });
+    // setTimeout is used because when invoking your first fbq tracking event, it would then create the _fbp cookie IF isn't created yet. and when the _fbp cookie is still being created by the fbq, we have to wait at least a second before sending all available CAPI event parameters along with the created fbp. this applies to _fbc cookie as well.
     setTimeout(() => {
       fetch("/api/event", {
         method: "POST",
@@ -39,7 +42,6 @@ export default function Home() {
     import("react-facebook-pixel")
       .then((mod) => mod.default)
       .then((pixel) => {
-        // pixel.init("967516697795046");
         pixel.fbq("track", "ViewContent", {}, { eventID });
       });
     fetch("/api/event", {
@@ -70,7 +72,6 @@ export default function Home() {
     import("react-facebook-pixel")
       .then((mod) => mod.default)
       .then((pixel) => {
-        // pixel.init("967516697795046");
         pixel.fbq("track", "Lead", {}, { eventID });
       });
     fetch("/api/event", {
@@ -79,6 +80,7 @@ export default function Home() {
         event_id: eventID,
         event_name: "Lead",
         fbp: getCookie("_fbp"),
+        fbc: getCookie("_fbc"),
         event_source_url: window.location.href,
         client_user_agent: navigator.userAgent,
         em: sha256(inputRef.current?.value),
@@ -96,6 +98,7 @@ export default function Home() {
     if (!getCookie("userID")) {
       setCookie("userID", v4(), 90);
     }
+    pageViewRefBtn.current?.click();
   }, []);
 
   return (
@@ -109,6 +112,7 @@ export default function Home() {
         </div>
         <div className="flex items-center justify-center gap-4">
           <button
+            ref={pageViewRefBtn}
             onClick={handlePageView}
             className="px-4 py-2 bg-white text-black text-xl rounded-xl"
           >

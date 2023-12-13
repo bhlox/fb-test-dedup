@@ -1,19 +1,32 @@
-// src/middleware.js
 import { NextResponse } from "next/server";
-export function middleware() {
+import type { NextRequest } from "next/server";
+import { sha256 } from "js-sha256";
+
+export function middleware(req: NextRequest) {
+  const userLocation = {
+    ip: req.ip ?? process.env.DEVELOPER_IP ?? "unknown ip",
+    city: sha256(req.geo?.city ?? process.env.DEVELOPER_CITY ?? "unknown city"),
+    country: sha256(
+      req.geo?.country ?? process.env.DEVELOPER_COUNTRY ?? "local location"
+    ),
+    region: sha256(
+      req.geo?.region ?? process.env.DEVELOPER_REGION ?? "unknown region"
+    ),
+  };
   const res = NextResponse.next();
-  res.headers.append("Access-Control-Allow-Credentials", "true");
-  res.headers.append("Access-Control-Allow-Origin", "*"); // replace this with your actual origin
-  res.headers.append(
-    "Access-Control-Allow-Methods",
-    "GET,DELETE,PATCH,POST,PUT"
-  );
-  res.headers.append(
-    "Access-Control-Allow-Headers",
-    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
-  );
+  res.cookies.set("user_location", JSON.stringify(userLocation));
   return res;
 }
+
 export const config = {
-  matcher: "/api/:path*",
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+  ],
 };
