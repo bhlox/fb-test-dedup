@@ -55,7 +55,7 @@ export default async function Handler(
       test_event_code: req.body.isTest ? "TEST46387" : null,
     };
     const response = await fetch(
-      `https://graph.facebook.com/v18.0/967516697795046/events?access_token=EAAGLMKEeUCcBO3nXtJbC6lnjwMORuThMxkkZAI8o9e9zjlcIOWfrg8auwpmaCj1Dq0CAnUD6UURdWRrHhXxlkZBqoghZBM6l0AMcLvpcZAAVNhqSELd5cOdirGogrX0cBlypPqWjHSzIx3MmRp1UdCwL4DxHTaEl7D66hAoHhHUmsJwF2v8VddN8pseJVBmXaAZDZD`,
+      `https://graph.facebook.com/v18.0/967516697795046/events?access_token=${process.env.FB_ACCESS_TOKEN}`,
       {
         method: "POST",
         headers: {
