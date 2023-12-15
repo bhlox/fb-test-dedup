@@ -1,7 +1,8 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { v4 } from "uuid";
 import { sha256 } from "js-sha256";
 import { getCookie, setCookie } from "@/lib/util/cookies";
+import { isIOS, isMacOs } from "react-device-detect";
 
 export default function Home() {
   const pageViewRefBtn = useRef<HTMLButtonElement>(null);
@@ -9,14 +10,18 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const checkboxRef = useRef<HTMLInputElement>(null);
+  const isIOSDevice = isIOS || isMacOs;
 
   const handlePageView = () => {
     const eventID = v4();
-    import("react-facebook-pixel")
-      .then((mod) => mod.default)
-      .then((pixel) => {
-        pixel.fbq("track", "PageView", {}, { eventID });
-      });
+
+    if (!isIOSDevice) {
+      import("react-facebook-pixel")
+        .then((mod) => mod.default)
+        .then((pixel) => {
+          pixel.fbq("track", "PageView", {}, { eventID });
+        });
+    }
     // setTimeout is used because when invoking your first fbq tracking event, it would then create the _fbp cookie IF isn't created yet. and when the _fbp cookie is still being created by the fbq, we have to wait at least a second before sending all available CAPI event parameters along with the created fbp. this applies to _fbc cookie as well.
     setTimeout(() => {
       fetch("/api/event", {
@@ -39,11 +44,13 @@ export default function Home() {
 
   const handleViewContent = () => {
     const eventID = v4();
-    import("react-facebook-pixel")
-      .then((mod) => mod.default)
-      .then((pixel) => {
-        pixel.fbq("track", "ViewContent", {}, { eventID });
-      });
+    if (!isIOSDevice) {
+      import("react-facebook-pixel")
+        .then((mod) => mod.default)
+        .then((pixel) => {
+          pixel.fbq("track", "ViewContent", {}, { eventID });
+        });
+    }
     fetch("/api/event", {
       method: "POST",
       body: JSON.stringify({
@@ -69,11 +76,13 @@ export default function Home() {
     }
 
     const eventID = v4();
-    import("react-facebook-pixel")
-      .then((mod) => mod.default)
-      .then((pixel) => {
-        pixel.fbq("track", "Lead", {}, { eventID });
-      });
+    if (!isIOSDevice) {
+      import("react-facebook-pixel")
+        .then((mod) => mod.default)
+        .then((pixel) => {
+          pixel.fbq("track", "Lead", {}, { eventID });
+        });
+    }
     fetch("/api/event", {
       method: "POST",
       body: JSON.stringify({
@@ -98,18 +107,18 @@ export default function Home() {
     if (!getCookie("userID")) {
       setCookie("userID", v4(), 90);
     }
-    pageViewRefBtn.current?.click();
+    // pageViewRefBtn.current?.click();
   }, []);
 
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-center max-w-7xl p-4 mx-auto space-y-4 bg-black">
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
           <input ref={checkboxRef} type="checkbox" name="test" id="test" />
           <label htmlFor="test" className="text-white">
             test mode
           </label>
-        </div>
+        </div> */}
         <div className="flex items-center justify-center gap-4">
           <button
             ref={pageViewRefBtn}
