@@ -113,12 +113,12 @@ export default function Home() {
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-center max-w-7xl p-4 mx-auto space-y-4 bg-black">
-        {/* <div className="flex gap-2">
+        <div className="flex gap-2">
           <input ref={checkboxRef} type="checkbox" name="test" id="test" />
           <label htmlFor="test" className="text-white">
             test mode
           </label>
-        </div> */}
+        </div>
         <div className="flex items-center justify-center gap-4">
           <button
             ref={pageViewRefBtn}

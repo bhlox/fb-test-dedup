@@ -21,6 +21,8 @@ type user_locationType = {
   region: string;
 };
 
+const fbPixelId = 967516697795046;
+
 export default async function Handler(
   req: IFacebookApiRequest,
   res: NextApiResponse
@@ -40,22 +42,27 @@ export default async function Handler(
           event_time: Math.floor(new Date().getTime() / 1000),
           event_source_url: req.body.event_source_url,
           user_data: {
-            client_ip_address: user_location?.ip,
+            client_ip_address: "49.151.103.24",
             client_user_agent: req.body.client_user_agent,
             fbp: req.body.fbp,
             fbc: req.body.fbc,
             em: req.body.em,
-            country: user_location?.country,
-            ct: user_location?.city,
-            st: user_location?.region,
+            // country: user_location?.country,
+            // ct: user_location?.city,
+            // st: user_location?.region,
             external_id: req.body.external_id,
           },
         },
       ],
-      test_event_code: req.body.isTest ? "TEST46387" : null,
+      // test_event_code: req.body.isTest ? "TEST46387" : null,
+      test_event_code: "TEST87200",
     };
+    const fbGraphAPIVersion = "v19.0";
+    const fbPixelId = 759662146057719;
+    const accessToken =
+      "EAAwkitiYFnYBO3zGv5zDnt8UomufZAKEeycEL3ZCfz1lPISHP0qJAdsptvJHGQ3mmtZALOXLp2UzNfAjxMotXrSArBUZARm6KC8qgHKTJZAwD5ovjjGr1W3zsjyTBihkoX8yefdoQ2okVLsLBKviuRHZAtM6654ZAZC5ypv2lFp1a6aKcOJRndqRkZANT4UsWxC6nawZDZD";
     const response = await fetch(
-      `https://graph.facebook.com/v18.0/967516697795046/events?access_token=${process.env.FB_ACCESS_TOKEN}`,
+      `https://graph.facebook.com/${fbGraphAPIVersion}/${fbPixelId}/events?access_token=${accessToken}`,
       {
         method: "POST",
         headers: {
